@@ -1,57 +1,63 @@
 {
-  "userName": "Tyler",
-  "sections": [
+  "user": {
+    "name": "Tyler",
+    "profile_image": "https://randomuser.me/api/portraits/men/85.jpg",
+    "notification_count": 3
+  },
+  "trending_news": [
     {
-      "tag": "trending",
-      "title": "Trending news",
-      "rightButtonTitle": "See all"
+      "id": 1,
+      "category": "Environment",
+      "title": "Global Summit on Climate Change: Historic Agreement Reached",
+      "publisher": "BBC News",
+      "publisher_icon": "https://logo.clearbit.com/bbc.com",
+      "image": "https://images.pexels.com/photos/572897/pexels-photo-572897.jpeg",
+      "date": "Jun 9, 2023",
+      "is_verified": true
     },
     {
-      "tag": "recommendation",
-      "title": "Recommendation",
-      "rightButtonTitle": ""
+      "id": 2,
+      "category": "Technology",
+      "title": "Tech Giant Unveils New AI-powered Smartphone",
+      "publisher": "The New York Times",
+      "publisher_icon": "https://logo.clearbit.com/nytimes.com",
+      "image": "https://images.pexels.com/photos/669619/pexels-photo-669619.jpeg",
+      "date": "Jun 8, 2023",
+      "is_verified": true
+    },
+    {
+      "id": 3,
+      "category": "Technology",
+      "title": "Space Exploration: New Mars Mission Announced",
+      "publisher": "Space Daily",
+      "publisher_icon": "https://logo.clearbit.com/spacedaily.com",
+      "image": "https://images.pexels.com/photos/586063/pexels-photo-586063.jpeg",
+      "date": "Jun 8, 2023",
+      "is_verified": true
     }
   ],
-  "articles": [
+  "recommendations": [
     {
-      "title": "Global Summit on Climate Change: Historic Agreement Reached",
-      "source": "BBC News",
-      "date": "Jun 9, 2023",
-      "imageUrl": "assets/images/img1.jpg",
-      "logoUrl": "assets/images/BBC.png",
-      "category": "Environment",
-      "isVerified": true,
-      "isLocalImage": true
-    },
-    {
-      "title": "Tech Giants Unveil AI-powered Solutions",
-      "source": "The NY Times",
-      "date": "Jun 10, 2023",
-      "imageUrl": "assets/images/img.jpg",
-      "logoUrl": "assets/images/Elog.png",
-      "category": "Technology",
-      "isVerified": false,
-      "isLocalImage": true
-    },
-    {
-      "title": "Space Exploration: New Mars Mission Announced",
-      "source": "Space Daily",
-      "date": "Jun 8, 2023",
-      "imageUrl": "assets/images/img.jpg",
-      "logoUrl": "assets/images/Elog.png",
-      "category": "Technology",
-      "isVerified": true,
-      "isLocalImage": true
-    },
-    {
-      "title": "Tech Startup Secures $50 Million Funding for Expansion",
-      "source": "Forbes",
+      "id": 101,
+      "publisher": "Forbes",
+      "publisher_icon": "https://logo.clearbit.com/forbes.com",
+      "publisher_verified": true,
       "date": "Jun 11, 2023",
-      "imageUrl": "assets/images/img2.jpg",
-      "logoUrl": "assets/images/Forbes.png",
+      "title": "Tech Startup Secures $50 Million Funding for Expansion",
       "category": "Business",
-      "isVerified": true,
-      "isLocalImage": true
+      "is_following": false,
+      "image": "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg"
+    },
+    {
+      "id": 102,
+      "publisher": "Bloomberg",
+      "publisher_icon": "https://logo.clearbit.com/bloomberg.com",
+      "publisher_verified": true,
+      "date": "Jun 10, 2023",
+      "title": "Global Markets Rally as Inflation Shows Signs of Cooling",
+      "category": "Finance",
+      "is_following": true,
+      "image": "https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg"
     }
   ]
 }

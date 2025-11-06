@@ -36,6 +36,7 @@ class NewsCardWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Stack - Imagine + Badge categorie
             Stack(
               children: [
                 ClipRRect(
@@ -68,6 +69,7 @@ class NewsCardWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Titlu
                   Text(
                     item.article.title,
                     style: TextStyle(
@@ -80,38 +82,18 @@ class NewsCardWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 12),
+                  // Row cu logo, sursă, dată
                   Row(
                     children: [
+                      // ═══════════════════════════════════════════════
+                      // LOGO - FIX AICI!
+                      // ═══════════════════════════════════════════════
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          item.article.logoUrl,
-                          width: 20,
-                          height: 20,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  item.article.source[0],
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                        child: _buildLogo(),  // ← Metodă nouă
                       ),
                       SizedBox(width: 6),
+                      // Sursă
                       Expanded(
                         child: Text(
                           item.article.source,
@@ -123,9 +105,11 @@ class NewsCardWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      // Bifă verificat
                       if (item.article.isVerified)
                         Icon(Icons.verified, size: 14, color: Colors.blue),
                       SizedBox(width: 8),
+                      // Dată
                       Text(
                         item.article.date,
                         style: TextStyle(
@@ -143,19 +127,84 @@ class NewsCardWidget extends StatelessWidget {
       ),
     );
   }
-//logo
-  Widget _buildImage() {
-    if (item.article.isLocalImage) {
-      return Image.asset(
-        item.article.imageUrl,
-        height: 150,
-        width: double.infinity,
+
+  // BUILD LOGO - SUPORT LOCAL + NETWORK
+  Widget _buildLogo() {
+    // Verifică dacă e URL (începe cu http)
+    final bool isNetworkLogo = item.article.logoUrl.startsWith('http');
+
+    if (isNetworkLogo) {
+      // Logo de pe internet
+      return Image.network(
+        item.article.logoUrl,
+        width: 20,
+        height: 20,
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          // În timpul încărcării - spinner mic
+          return Container(
+            width: 20,
+            height: 20,
+            color: Colors.grey[300],
+            child: Center(
+              child: SizedBox(
+                width: 12,
+                height: 12,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey[600]!),
+                ),
+              ),
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
-          return _buildPlaceholder();
+          // Eroare - fallback
+          return _buildLogoFallback();
         },
       );
     } else {
+      // Logo local din assets
+      return Image.asset(
+        item.article.logoUrl,
+        width: 20,
+        height: 20,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildLogoFallback();
+        },
+      );
+    }
+  }
+
+  Widget _buildLogoFallback() {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        color: Colors.red,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          item.article.source.isNotEmpty ? item.article.source[0] : 'N',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    // Verifică dacă e URL (începe cu http)
+    final bool isNetworkImage = item.article.imageUrl.startsWith('http');
+
+    if (isNetworkImage) {
+      // Imagine de pe internet
       return Image.network(
         item.article.imageUrl,
         height: 150,
@@ -163,14 +212,26 @@ class NewsCardWidget extends StatelessWidget {
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
+          // În timpul încărcării
           return Container(
             height: 150,
             color: Colors.grey[200],
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(strokeWidth: 2),
             ),
           );
         },
+        errorBuilder: (context, error, stackTrace) {
+          return _buildPlaceholder();
+        },
+      );
+    } else {
+      // Imagine locală din assets
+      return Image.asset(
+        item.article.imageUrl,
+        height: 150,
+        width: double.infinity,
+        fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return _buildPlaceholder();
         },
@@ -196,6 +257,8 @@ class NewsCardWidget extends StatelessWidget {
         return AppColors.colorBlue;
       case 'business':
         return AppColors.colorOrange;
+      case 'finance':
+        return Colors.green;
       default:
         return Colors.grey;
     }

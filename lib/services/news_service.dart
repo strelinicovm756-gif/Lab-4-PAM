@@ -3,16 +3,16 @@ import 'package:flutter/services.dart';
 import '../model/news_article.dart';
 
 class NewsService {
-
+  // Încărcare asincronă din JSON
   Future<Map<String, dynamic>> loadNewsData() async {
     try {
-
+      // Încarcă fișierul JSON
       final String jsonString = await rootBundle.loadString('assets/data/news_data.json');
 
+      // Simuleaza delay (ca un API)
+      await Future.delayed(Duration(seconds: 1));
 
-      await Future.delayed(Duration(seconds: 2));
-
-
+      // Parse JSON
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
       return jsonData;
@@ -22,18 +22,27 @@ class NewsService {
     }
   }
 
+  // Parse user name
+  String parseUserName(Map<String, dynamic>? userData) {
+    if (userData == null) return 'User';
+    return userData['name'] ?? 'User';
+  }
 
-  List<NewsArticle> parseArticles(List<dynamic> articlesJson) {
-    return articlesJson
-        .map((articleJson) => NewsArticle.fromJson(articleJson))
+  // Parse trending news
+  List<NewsArticle> parseTrendingNews(List<dynamic>? trendingJson) {
+    if (trendingJson == null || trendingJson.isEmpty) return [];
+
+    return trendingJson
+        .map((json) => NewsArticle.fromTrendingNews(json))
         .toList();
   }
 
-  Map<String, dynamic> parseSection(Map<String, dynamic> sectionJson) {
-    return {
-      'tag': sectionJson['tag'] ?? '',
-      'title': sectionJson['title'] ?? '',
-      'rightButtonTitle': sectionJson['rightButtonTitle'] ?? '',
-    };
+  // Parse recommendations
+  List<NewsArticle> parseRecommendations(List<dynamic>? recommendationsJson) {
+    if (recommendationsJson == null || recommendationsJson.isEmpty) return [];
+
+    return recommendationsJson
+        .map((json) => NewsArticle.fromRecommendation(json))
+        .toList();
   }
 }
