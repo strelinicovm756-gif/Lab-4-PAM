@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../domain/usecases/get_feed_usecase.dart';
 import '../list_items/list_item.dart';
 import '../list_items/nav_bar_list_item.dart';
 import '../list_items/section_item.dart';
@@ -6,11 +7,12 @@ import '../list_items/news_card_item.dart';
 import '../list_items/news_horizontal_list_item.dart';
 import '../list_items/recommendation_item.dart';
 import '../model/news_article.dart';
-import '../services/news_service.dart';
 import '../resources/strings.dart';
 
 class MainController extends GetxController {
-  final NewsService _newsService = NewsService();
+  final GetFeedUseCase getFeedUseCase;
+
+  MainController({required this.getFeedUseCase});
 
   RxList<ListItem> items = RxList();
   RxBool isLoading = true.obs;
@@ -19,36 +21,38 @@ class MainController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadDataFromJson();
+    loadData();
   }
 
-  // Încărcare asincronă din JSON
-  Future<void> loadDataFromJson() async {
+  Future<void> loadData() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      // Încarcă JSON
-      final Map<String, dynamic> jsonData = await _newsService.loadNewsData();
+      final feedData = await getFeedUseCase.execute();
 
-      // Parse date
-      final String userName = _newsService.parseUserName(jsonData['user']);
-      final List<NewsArticle> trendingNews = _newsService.parseTrendingNews(jsonData['trending_news']);
-      final List<NewsArticle> recommendations = _newsService.parseRecommendations(jsonData['recommendations']);
+      final trendingNews = feedData.trendingNews
+          .map((entity) => NewsArticle.fromEntity(entity))
+          .toList();
 
-      // Construiește lista
-      _buildItemsList(userName, trendingNews, recommendations);
+      final recommendations = feedData.recommendations
+          .map((entity) => NewsArticle.fromEntity(entity))
+          .toList();
+
+      _buildItemsList(
+        feedData.user.name,
+        trendingNews,
+        recommendations,
+      );
 
       isLoading.value = false;
-
     } catch (e) {
       isLoading.value = false;
-      errorMessage.value = 'Failed to load news: $e';
+      errorMessage.value = 'Failed to load news: ${e.toString()}';
       print('Error: $e');
     }
   }
 
-  // Construire listă items
   void _buildItemsList(
       String userName,
       List<NewsArticle> trendingNews,
@@ -56,10 +60,8 @@ class MainController extends GetxController {
       ) {
     items.clear();
 
-    // Nav Bar
     items.add(NavBarListItem(userName: userName));
 
-    // Trending Section
     if (trendingNews.isNotEmpty) {
       items.add(SectionItem(
         tag: "trending",
@@ -67,7 +69,6 @@ class MainController extends GetxController {
         rightButtonTitle: Strings.seeAll,
       ));
 
-      // Trending News Cards
       items.add(NewsHorizontalListItem(
         newsCards: trendingNews
             .map((article) => NewsCardItem(article: article))
@@ -75,7 +76,6 @@ class MainController extends GetxController {
       ));
     }
 
-    // Recommendation Section
     if (recommendations.isNotEmpty) {
       items.add(SectionItem(
         tag: "recommendation",
@@ -83,7 +83,6 @@ class MainController extends GetxController {
         rightButtonTitle: "",
       ));
 
-      // Recommendation Cards
       for (var article in recommendations) {
         items.add(RecommendationItem(
           article: article,
@@ -92,8 +91,8 @@ class MainController extends GetxController {
       }
     }
   }
-  // Retry
+
   void retry() {
-    loadDataFromJson();
+    loadData();
   }
 }

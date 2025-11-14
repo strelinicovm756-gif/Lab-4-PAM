@@ -21,7 +21,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    Get.lazyPut(() => MainController());
+    // NU MAI PUNE Get.lazyPut aici - se face în injection_container!
   }
 
   @override
@@ -32,7 +32,6 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Color(0xffFFFFFF),
       body: SafeArea(
         child: Obx(() {
-          // Loading state
           if (controller.isLoading.value) {
             return Center(
               child: Column(
@@ -52,7 +51,6 @@ class _MainPageState extends State<MainPage> {
             );
           }
 
-          // Error state
           if (controller.errorMessage.value.isNotEmpty) {
             return Center(
               child: Padding(
@@ -90,7 +88,6 @@ class _MainPageState extends State<MainPage> {
             );
           }
 
-          // Success state - Lista
           return ListView.builder(
             itemCount: controller.items.length,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),

@@ -1,3 +1,5 @@
+import '../domain/entities/news_article_entity.dart';
+
 class NewsArticle {
   final int? id;
   final String title;
@@ -21,46 +23,23 @@ class NewsArticle {
     required this.logoUrl,
   });
 
-  // Factory constructor pentru trending_news
-  factory NewsArticle.fromTrendingNews(Map<String, dynamic> json) {
+  // NOU: Creare din Entity
+  factory NewsArticle.fromEntity(NewsArticleEntity entity) {
     return NewsArticle(
-      id: json['id'],
-      title: json['title'] ?? '',
-      source: json['publisher'] ?? '',
-      date: json['date'] ?? '',
-      imageUrl: json['image'] ?? '',
-      logoUrl: json['publisher_icon'] ?? '',
-      category: json['category'] ?? '',
-      isVerified: json['is_verified'] ?? false,
+      id: entity.id,
+      title: entity.title,
+      source: entity.publisher,
+      date: entity.date,
+      imageUrl: entity.image,
+      logoUrl: entity.publisherIcon,
+      category: entity.category,
+      isVerified: entity.isVerified,
       isLocalImage: false,
     );
   }
 
-  // Factory constructor pentru recommendations
-  factory NewsArticle.fromRecommendation(Map<String, dynamic> json) {
-    return NewsArticle(
-      id: json['id'],
-      title: json['title'] ?? '',
-      source: json['publisher'] ?? '',
-      date: json['date'] ?? '',
-      imageUrl: json['image'] ?? '',
-      logoUrl: json['publisher_icon'] ?? '',
-      category: json['category'] ?? '',
-      isVerified: json['publisher_verified'] ?? false,
-      isLocalImage: false,
-    );
-  }
-
-  // Generic fromJson (backward compatible)
+  // Păstrăm pentru backwards compatibility
   factory NewsArticle.fromJson(Map<String, dynamic> json) {
-    if (json.containsKey('publisher')) {
-      if (json.containsKey('publisher_verified')) {
-        return NewsArticle.fromRecommendation(json);
-      } else {
-        return NewsArticle.fromTrendingNews(json);
-      }
-    }
-
     return NewsArticle(
       id: json['id'],
       title: json['title'] ?? '',
