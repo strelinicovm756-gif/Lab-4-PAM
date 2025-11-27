@@ -1,0 +1,19 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+FeedResponseModel _$FeedResponseModelFromJson(Map<String, dynamic> json) =>
+    FeedResponseModel(
+      articles: (json['articles'] as List<dynamic>)
+          .map((e) => NewsArticleModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      recommendations: (json['recommendations'] as List<dynamic>)
+          .map((e) => NewsArticleModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$FeedResponseModelToJson(FeedResponseModel instance) =>
+    <String, dynamic>{
+      'articles': instance.articles,
+      'recommendations': instance.recommendations,
+    };
