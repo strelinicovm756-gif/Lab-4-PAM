@@ -7,6 +7,6 @@ class RecommendationItem extends ListItem {
 
   RecommendationItem({
     required this.article,
-    this.showFollowButton = true,
+    required this.showFollowButton,
   });
 }

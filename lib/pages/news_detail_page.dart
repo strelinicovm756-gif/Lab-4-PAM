@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../model/news_article.dart';
-import '../domain/usecases/get_publisher_details_usecase.dart';
-import '../domain/entities/publisher_details_entity.dart';
+import 'package:domain/domain.dart';
 
 class NewsDetailPage extends StatefulWidget {
   final NewsArticle article;

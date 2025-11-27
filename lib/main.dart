@@ -1,11 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'core/di/injection_container.dart';
+
+import 'package:domain/domain.dart';
+import 'package:data/data.dart';
+
+// Import local (UI)
 import 'pages/main_page.dart';
+import 'pages/MainController.dart';
 
 void main() {
-  InjectionContainer.init();
+  _initDependencies();
   runApp(const MyApp());
+}
+
+void _initDependencies() {
+  // Data Source (DOAR remote)
+  Get.lazyPut<NewsRemoteDataSource>(() => NewsRemoteDataSource());
+
+  // Repository
+  Get.lazyPut<NewsRepository>(
+        () => NewsRepositoryImpl(
+      remoteDataSource: Get.find<NewsRemoteDataSource>(),
+    ),
+  );
+
+  // Use Cases
+  Get.lazyPut(() => GetFeedUseCase(Get.find<NewsRepository>()));
+  Get.lazyPut(() => GetPublisherDetailsUseCase(Get.find<NewsRepository>()));
+
+  // Controllers
+  Get.lazyPut(
+        () => MainController(getFeedUseCase: Get.find<GetFeedUseCase>()),
+  );
 }
 
 class MyApp extends StatelessWidget {

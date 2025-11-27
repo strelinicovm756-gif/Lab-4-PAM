@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import '../domain/usecases/get_feed_usecase.dart';
+import 'package:domain/domain.dart';
+
 import '../list_items/list_item.dart';
 import '../list_items/nav_bar_list_item.dart';
 import '../list_items/section_item.dart';
@@ -29,27 +30,34 @@ class MainController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final feedData = await getFeedUseCase.execute();
+      print('MainController: Loading feed data...');
 
-      final trendingNews = feedData.trendingNews
+      final feedResult = await getFeedUseCase.execute();
+
+      print('MainController: Received ${feedResult.trendingNews.length} trending news');
+      print('MainController: Received ${feedResult.recommendations.length} recommendations');
+
+      final trendingNews = feedResult.trendingNews
           .map((entity) => NewsArticle.fromEntity(entity))
           .toList();
 
-      final recommendations = feedData.recommendations
+
+      final recommendations = feedResult.recommendations
           .map((entity) => NewsArticle.fromEntity(entity))
           .toList();
 
       _buildItemsList(
-        feedData.user.name,
+        'User',
         trendingNews,
         recommendations,
       );
 
       isLoading.value = false;
+      print('MainController: Feed loaded successfully with ${items.length} items');
     } catch (e) {
       isLoading.value = false;
       errorMessage.value = 'Failed to load news: ${e.toString()}';
-      print('Error: $e');
+      print('MainController Error: $e');
     }
   }
 
@@ -60,8 +68,10 @@ class MainController extends GetxController {
       ) {
     items.clear();
 
+    // Top Nav Bar
     items.add(NavBarListItem(userName: userName));
 
+    // Trending Section
     if (trendingNews.isNotEmpty) {
       items.add(SectionItem(
         tag: "trending",
@@ -76,6 +86,7 @@ class MainController extends GetxController {
       ));
     }
 
+    // Recommendations Section
     if (recommendations.isNotEmpty) {
       items.add(SectionItem(
         tag: "recommendation",
@@ -90,9 +101,12 @@ class MainController extends GetxController {
         ));
       }
     }
+
+    print('Items list built: ${items.length} items');
   }
 
   void retry() {
+    print('Retrying to load feed...');
     loadData();
   }
 }
